@@ -1,0 +1,70 @@
+﻿<Window x:Class="App.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:App.Properties"
+        xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+        xmlns:viewModels1="clr-namespace:App.Interfaces.ViewModels"
+        mc:Ignorable="d"
+        Title="{x:Static properties:Resources.AppTitle}" 
+        Height="300" Width="600" MinHeight="200" MinWidth="400"
+        WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance viewModels1:IMainWindowViewModel, IsDesignTimeCreatable=False}"
+        StateChanged="Window_OnStateChanged"
+        UseLayoutRounding="True">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
+    </Window.Style>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <ListBox Grid.RowSpan="3" SelectedItem="{Binding SelectedKey}" ItemsSource="{Binding KeyMappings}" BorderThickness="1" BorderBrush="{DynamicResource {x:Static adonisUi:Brushes.Layer0BorderBrush}}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} -> {1}" Mode="OneWay">
+                                <Binding Path="SourceKey" Mode="OneWay" Converter="{StaticResource KeyToRepresentationConverter}"/>
+                                <Binding Path="MappedKey" Mode="OneWay" Converter="{StaticResource KeyToRepresentationConverter}"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Column="2" MinWidth="100">
+            <StackPanel.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Margin" Value="0 0 0 5"/>
+                    <Setter Property="Padding" Value="7 3"/>
+                </Style>
+            </StackPanel.Resources>
+
+            <Button Content="Add" Command="{Binding AddMappingCommand}"/>
+            <Button Content="Delete" Command="{Binding DeleteMappingCommand}"/>
+            <Button Content="Clear" Command="{Binding ClearMappingsCommand}"/>
+            <Button Content="Import" Command="{Binding ImportMappingsCommand}"/>
+            <Button Content="Export" Command="{Binding ExportMappingsCommand}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="2">
+            <DockPanel>
+                <TextBlock Text="App theme:" VerticalAlignment="Center"/>
+                <ComboBox SelectedItem="{Binding AppTheme}" ItemsSource="{Binding AvailableThemes}" Margin="5 0 0 0"/>
+            </DockPanel>
+            <CheckBox Content="Run when computer starts" IsChecked="{Binding StartWithWindows}" Margin="0 5 1 0"/>
+            <CheckBox Content="Start minimized" IsChecked="{Binding StartMinimized}" Margin="0 5 1 0"/>
+        </StackPanel>
+    </Grid>
+</Window>
