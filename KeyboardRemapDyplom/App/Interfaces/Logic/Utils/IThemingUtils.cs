@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using App.Logic;
-
-namespace App.Interfaces.Logic.Utils
+﻿namespace App.Interfaces.Logic.Utils
 {
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    using App.Logic;
+
     public interface IThemingUtils : INotifyPropertyChanged
     {
-        AppThemes CurrentTheme { get; set; }
-
         IReadOnlyList<AppThemes> AvailableThemes { get; }
+
+        AppThemes CurrentTheme { get; set; }
 
         void ApplyCurrent();
     }

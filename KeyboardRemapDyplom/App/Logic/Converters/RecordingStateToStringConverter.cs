@@ -1,9 +1,10 @@
-﻿using System;
-using System.Globalization;
-using MVVM_Tools.Code.Classes;
-
-namespace App.Logic.Converters
+﻿namespace App.Logic.Converters
 {
+    using System;
+    using System.Globalization;
+
+    using MVVM_Tools.Code.Classes;
+
     public class RecordingStateToStringConverter : ConverterBase<RecordingStates, string>
     {
         public override string ConvertInternal(RecordingStates value, object parameter, CultureInfo culture)

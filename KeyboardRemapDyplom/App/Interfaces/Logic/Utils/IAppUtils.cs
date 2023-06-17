@@ -1,13 +1,13 @@
-﻿using JetBrains.Annotations;
-
-namespace App.Interfaces.Logic.Utils
+﻿namespace App.Interfaces.Logic.Utils
 {
+    using JetBrains.Annotations;
+
     public interface IAppUtils
     {
-        [NotNull]
-        string GetExecutablePath();
-
         [CanBeNull]
         string GetExecutableDir();
+
+        [NotNull]
+        string GetExecutablePath();
     }
 }

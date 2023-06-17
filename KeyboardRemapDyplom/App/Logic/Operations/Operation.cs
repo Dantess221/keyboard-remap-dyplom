@@ -6,7 +6,7 @@
 
         public virtual void Reset()
         {
-            Success = false;
+            this.Success = false;
         }
     }
 }

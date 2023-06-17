@@ -1,22 +1,23 @@
-﻿using MVVM_Tools.Code.Classes;
-
-namespace App.ViewModels
+﻿namespace App.ViewModels
 {
+    using MVVM_Tools.Code.Classes;
+
     public class KeyToKeyViewModel : BindableBase
     {
-        public int SourceKey
-        {
-            get => _sourceKey;
-            set => SetProperty(ref _sourceKey, value);
-        }
+        private int _mappedKey;
+
+        private int _sourceKey;
 
         public int MappedKey
         {
-            get => _mappedKey;
-            set => SetProperty(ref _mappedKey, value);
+            get => this._mappedKey;
+            set => this.SetProperty(ref this._mappedKey, value);
         }
 
-        private int _sourceKey;
-        private int _mappedKey;
+        public int SourceKey
+        {
+            get => this._sourceKey;
+            set => this.SetProperty(ref this._sourceKey, value);
+        }
     }
 }

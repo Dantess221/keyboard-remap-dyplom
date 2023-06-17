@@ -1,36 +1,36 @@
-﻿using System;
-using System.Windows;
-using App.Interfaces.Logic;
-using App.Interfaces.ViewModels;
-using JetBrains.Annotations;
-
-namespace App.Windows
+﻿namespace App.Windows
 {
+    using System;
+    using System.Windows;
+
+    using App.Interfaces.Logic;
+    using App.Interfaces.ViewModels;
+
+    using JetBrains.Annotations;
+
     public partial class MainWindow
     {
-        [NotNull] private readonly INotifyIconHolder _notifyIconHolder;
+        [NotNull]
+        private readonly INotifyIconHolder _notifyIconHolder;
 
-        public MainWindow(
-            [NotNull] IMainWindowViewModel viewModel,
-            [NotNull] INotifyIconHolder notifyIconHolder
-        )
+        public MainWindow([NotNull] IMainWindowViewModel viewModel, [NotNull] INotifyIconHolder notifyIconHolder)
         {
-            _notifyIconHolder = notifyIconHolder;
-            DataContext = viewModel;
-            InitializeComponent();
+            this._notifyIconHolder = notifyIconHolder;
+            this.DataContext = viewModel;
+            this.InitializeComponent();
         }
 
         private void Window_OnStateChanged(object sender, EventArgs e)
         {
-            switch (WindowState)
+            switch (this.WindowState)
             {
                 case WindowState.Minimized:
-                    ShowInTaskbar = false;
-                    _notifyIconHolder.NotifyIcon.Visible = true;
+                    this.ShowInTaskbar = false;
+                    this._notifyIconHolder.NotifyIcon.Visible = true;
                     break;
                 default:
-                    ShowInTaskbar = true;
-                    _notifyIconHolder.NotifyIcon.Visible = false;
+                    this.ShowInTaskbar = true;
+                    this._notifyIconHolder.NotifyIcon.Visible = false;
                     break;
             }
         }

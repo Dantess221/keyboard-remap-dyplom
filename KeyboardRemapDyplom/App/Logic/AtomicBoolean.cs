@@ -1,41 +1,43 @@
-﻿using System.Threading;
-
-namespace App.Logic
+﻿namespace App.Logic
 {
+    using System.Threading;
+
     public class AtomicBoolean
     {
         private volatile int _value;
 
-        public AtomicBoolean() {}
+        public AtomicBoolean()
+        {
+        }
 
         public AtomicBoolean(bool initialValue)
         {
-            _value = initialValue ? 1 : 0;
+            this._value = initialValue ? 1 : 0;
         }
 
         public bool CompareAndSet(bool expect, bool update)
         {
-            return Interlocked.CompareExchange(ref _value, update ? 1 : 0, expect ? 1 : 0) == 1 == expect;
+            return Interlocked.CompareExchange(ref this._value, update ? 1 : 0, expect ? 1 : 0) == 1 == expect;
         }
 
         public bool Get()
         {
-            return _value == 1;
+            return this._value == 1;
         }
 
         public bool GetAndSet(bool newValue)
         {
-            return Interlocked.Exchange(ref _value, newValue ? 1 : 0) == 1;
+            return Interlocked.Exchange(ref this._value, newValue ? 1 : 0) == 1;
         }
 
         public void Set(bool newValue)
         {
-            _value = newValue ? 1 : 0;
+            this._value = newValue ? 1 : 0;
         }
 
         public override string ToString()
         {
-            return (_value == 1).ToString();
+            return (this._value == 1).ToString();
         }
     }
 }

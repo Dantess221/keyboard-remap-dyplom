@@ -18,6 +18,7 @@ using Microsoft.Win32;
 using MVVM_Tools.Code.Classes;
 using MVVM_Tools.Code.Commands;
 using Newtonsoft.Json;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace App.ViewModels
 {
@@ -86,8 +87,7 @@ namespace App.ViewModels
             _themingUtils = themingUtils;
             _appSettings = appSettings;
 
-            foreach (var mapping in keyMappingsHandler.KeyMappings)
-                KeyMappings.Add(new KeyToKeyViewModel {SourceKey = mapping.Key, MappedKey = mapping.Value});
+            LoadMappingsOnStartup();
 
             AddMappingCommand = new ActionCommand(AddMapping_Execute);
             DeleteMappingCommand = new ActionCommand(DeleteMapping_Execute, () => SelectedKey != null);
@@ -99,6 +99,24 @@ namespace App.ViewModels
             PropertyChanged += OnPropertyChanged;
             _themingUtils.PropertyChanged += ThemingUtils_OnPropertyChanged;
             _appSettings.PropertyChanged += AppSettings_OnPropertyChanged;
+        }
+
+        private void LoadMappingsOnStartup()
+        {
+            string filePath = (string)Registry.GetValue("HKEY_CURRENT_USER\\" + "Software\\KeyboardRemapper\\" + "Config\\", $"LatestSaveFile", "");
+            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+            {
+                _keyMappingsHandler.RemoveAllMappings();
+                KeyMappings.Clear();
+
+                var exportedModel = JsonConvert.DeserializeObject<ExportedMappings>(File.ReadAllText(filePath, Encoding.UTF8));
+
+                foreach (var mapping in exportedModel.KeyMappings)
+                {
+                    _keyMappingsHandler.SetMapping(mapping.Key, mapping.Value);
+                    KeyMappings.Add(new KeyToKeyViewModel { SourceKey = mapping.Key, MappedKey = mapping.Value });
+                }
+            }
         }
 
         #region Commands
@@ -201,6 +219,8 @@ namespace App.ViewModels
                 _keyMappingsHandler.SetMapping(mapping.Key, mapping.Value);
                 KeyMappings.Add(new KeyToKeyViewModel {SourceKey = mapping.Key, MappedKey = mapping.Value});
             }
+
+            Registry.SetValue("HKEY_CURRENT_USER\\" + "Software\\KeyboardRemapper\\" + "Config\\", $"LatestSaveFile", dialog.FileName, RegistryValueKind.String);
         }
 
         private void ExportMappings_Execute()
@@ -223,6 +243,8 @@ namespace App.ViewModels
                 Directory.CreateDirectory(fileDir);
 
             File.WriteAllText(dialog.FileName, JsonConvert.SerializeObject(exportedModel, Formatting.Indented), Encoding.UTF8);
+
+            Registry.SetValue("HKEY_CURRENT_USER\\" + "Software\\KeyboardRemapper\\" + "Config\\", $"LatestSaveFile", dialog.FileName, RegistryValueKind.String);
         }
 
         #endregion

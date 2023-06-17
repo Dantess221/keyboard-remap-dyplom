@@ -1,26 +1,34 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using App.Logic;
-using MVVM_Tools.Code.Commands;
-
-namespace App.Interfaces.ViewModels
+﻿namespace App.Interfaces.ViewModels
 {
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    using App.Logic;
+
+    using MVVM_Tools.Code.Commands;
+
     public interface INewMappingWindowViewModel : INotifyPropertyChanged
     {
-        IReadOnlyList<int> AvailableKeys { get; }
+        IActionCommand ApplyCommand { get; }
 
-        int SourceKey { get; set; }
+        IReadOnlyList<int> AvailableKeys { get; }
 
         int MappedKey { get; set; }
 
         RecordingStates RecordingState { get; }
 
-        IActionCommand<int> SetSourceKeyCommand { get; }
-        IActionCommand<int> SetMappedKeyCommand { get; }
-        IActionCommand RecordSourceKeyCommand { get; }
-        IActionCommand RecordMappedKeyCommand { get; }
         IActionCommand<int> RecordKeyCommand { get; }
+
+        IActionCommand RecordMappedKeyCommand { get; }
+
+        IActionCommand RecordSourceKeyCommand { get; }
+
+        IActionCommand<int> SetMappedKeyCommand { get; }
+
+        IActionCommand<int> SetSourceKeyCommand { get; }
+
+        int SourceKey { get; set; }
+
         IActionCommand StopRecordingCommand { get; }
-        IActionCommand ApplyCommand { get; }     
     }
 }

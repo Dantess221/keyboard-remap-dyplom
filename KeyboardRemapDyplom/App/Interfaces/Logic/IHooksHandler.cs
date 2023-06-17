@@ -1,16 +1,17 @@
-﻿using System;
-using JetBrains.Annotations;
-
-namespace App.Interfaces.Logic
+﻿namespace App.Interfaces.Logic
 {
+    using System;
+
+    using JetBrains.Annotations;
+
     public interface IHooksHandler : IDisposable
     {
-        void SetAllKeysHandler([CanBeNull] Func<int, bool> keyHandler);
-
-        void SetHook(int keyCode, [NotNull] Action handler);
+        void RemoveAllHooks();
 
         bool RemoveHook(int keyCode);
 
-        void RemoveAllHooks();
+        void SetAllKeysHandler([CanBeNull] Func<int, bool> keyHandler);
+
+        void SetHook(int keyCode, [NotNull] Action handler);
     }
 }

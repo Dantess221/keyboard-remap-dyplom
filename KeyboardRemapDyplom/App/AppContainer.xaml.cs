@@ -1,23 +1,35 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Forms;
-using App.Interfaces.Logic;
-using App.Interfaces.Logic.Utils;
-using App.Interfaces.ViewModels;
-using App.Logic;
-using App.Logic.Operations;
-using App.Logic.Utils;
-using App.ViewModels;
-using App.Windows;
-using Autofac;
-using SettingsManager;
-using SettingsManager.ModelProcessors;
-
-namespace App
+﻿namespace App
 {
+    using System.IO;
+    using System.Windows;
+    using System.Windows.Forms;
+
+    using App.Interfaces.Logic;
+    using App.Interfaces.Logic.Utils;
+    using App.Interfaces.ViewModels;
+    using App.Logic;
+    using App.Logic.Operations;
+    using App.Logic.Utils;
+    using App.ViewModels;
+    using App.Windows;
+
+    using Autofac;
+
+    using SettingsManager;
+    using SettingsManager.ModelProcessors;
+
     public partial class AppContainer
     {
         private IContainer _container;
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            this._container.Resolve<IKeyMappingsHandler>().Dispose();
+            this._container.Resolve<IHooksHandler>().Dispose();
+            this._container.Resolve<INotifyIconHolder>().Dispose();
+
+            base.OnExit(e);
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -41,44 +53,36 @@ namespace App
             container.RegisterType<ThemingUtils>().As<IThemingUtils>().SingleInstance();
 
             // other
-            container.Register(context => new SettingsBuilder<AppSettings>()
-                .WithFile(Path.Combine(context.Resolve<IAppUtils>().GetExecutableDir() ?? string.Empty, "appSettings.json"))
-                .WithProcessor(new JsonModelProcessor())
-                .Build()
-            ).SingleInstance().As<IAppSettings>();
+            container.Register(
+                    context => new SettingsBuilder<AppSettings>()
+                        .WithFile(
+                            Path.Combine(
+                                context.Resolve<IAppUtils>().GetExecutableDir() ?? string.Empty,
+                                "appSettings.json")).WithProcessor(new JsonModelProcessor()).Build()).SingleInstance()
+                .As<IAppSettings>();
             container.RegisterType<HooksHandler>().As<IHooksHandler>().SingleInstance();
             container.RegisterGeneric(typeof(Provider<>)).As(typeof(IProvider<>)).SingleInstance();
             container.RegisterType<NotifyIcon>().SingleInstance();
             container.RegisterType<NotifyIconHolder>().As<INotifyIconHolder>().SingleInstance();
             container.RegisterType<KeyMappingsHandler>().As<IKeyMappingsHandler>().SingleInstance();
 
-            _container = container.Build();
+            this._container = container.Build();
 
-            Initialize();
-        }
-
-        protected override void OnExit(ExitEventArgs e)
-        {
-            _container.Resolve<IKeyMappingsHandler>().Dispose();
-            _container.Resolve<IHooksHandler>().Dispose();
-            _container.Resolve<INotifyIconHolder>().Dispose();
-
-            base.OnExit(e);
+            this.Initialize();
         }
 
         private void Initialize()
         {
             // constructor invocation starts hooking
-            _container.Resolve<IKeyMappingsHandler>();
+            this._container.Resolve<IKeyMappingsHandler>();
 
             // apply app theme
-            _container.Resolve<IThemingUtils>().ApplyCurrent();
+            this._container.Resolve<IThemingUtils>().ApplyCurrent();
 
             // show main window or tray icon
-            if (_container.Resolve<IAppSettings>().StartMinimized)
-                _container.Resolve<INotifyIconHolder>().NotifyIcon.Visible = true;
-            else
-                _container.Resolve<MainWindow>().Show();
+            if (this._container.Resolve<IAppSettings>().StartMinimized)
+                this._container.Resolve<INotifyIconHolder>().NotifyIcon.Visible = true;
+            else this._container.Resolve<MainWindow>().Show();
         }
     }
 }
